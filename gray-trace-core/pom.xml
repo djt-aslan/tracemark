@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>io.tracemark</groupId>
+        <artifactId>gray-trace-parent</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>gray-trace-core</artifactId>
+    <name>gray-trace :: core</name>
+    <description>灰度上下文核心，无框架依赖，可被 Starter 和 Agent 共同使用</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>transmittable-thread-local</artifactId>
+        </dependency>
+    </dependencies>
+</project>

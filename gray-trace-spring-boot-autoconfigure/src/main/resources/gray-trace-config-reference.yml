@@ -1,0 +1,37 @@
+# ============================================================
+# gray-trace 灰度追踪 - 完整配置参考
+# ============================================================
+
+gray:
+  trace:
+    # ── 全局总开关 ──────────────────────────────────────────
+    enabled: true          # false 时关闭所有拦截，零开销
+
+    # ── Servlet 入口（提取 x-gray-tag Header → GrayContext）
+    servlet:
+      enabled: true        # 建议始终开启
+
+    # ── 出口 HTTP 客户端（将灰度标透传给下游）
+    rest-template:
+      enabled: true
+    ok-http:
+      enabled: true
+    http-client:
+      enabled: true        # JDK 11+ HttpClient
+    feign:
+      enabled: true        # OpenFeign
+
+    # ── 线程池上下文传递（防止 @Async / CompletableFuture 丢失灰度标）
+    thread-pool:
+      enabled: true
+      async-decorator: true   # 为 Spring ThreadPoolTaskExecutor 设置 TaskDecorator
+
+    # ── 消息队列染色（默认关闭，异步消息和同步灰度语义需谨慎）
+    mq:
+      enabled: false       # ← 改为 true 开启 RocketMQ 染色
+      producer: true       # 发送消息时注入 grayTag 属性
+      consumer: true       # 消费消息时恢复 grayTag 到上下文
+
+    # ── WebFlux / WebClient（响应式场景）
+    web-flux:
+      enabled: true
