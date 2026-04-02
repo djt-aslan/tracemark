@@ -85,6 +85,24 @@ public class GrayAutoConfiguration {
         return new GrayHttpClientBeanPostProcessor(properties);
     }
 
+    // ─── Apache HttpClient 4.x 出口 ──────────────────────────
+    @Bean
+    @ConditionalOnClass(name = "org.apache.http.impl.client.CloseableHttpClient")
+    @ConditionalOnProperty(prefix = "gray.trace.apache-http-client", name = "enabled", matchIfMissing = true)
+    public GrayApacheHttpClientBeanPostProcessor grayApacheHttpClientBeanPostProcessor(
+            GrayProperties properties) {
+        return new GrayApacheHttpClientBeanPostProcessor(properties);
+    }
+
+    // ─── Apache HttpClient 5.x 出口 ──────────────────────────
+    @Bean
+    @ConditionalOnClass(name = "org.apache.hc.client5.http.impl.classic.CloseableHttpClient")
+    @ConditionalOnProperty(prefix = "gray.trace.apache-http-client", name = "enabled", matchIfMissing = true)
+    public GrayApacheHttp5ClientBeanPostProcessor grayApacheHttp5ClientBeanPostProcessor(
+            GrayProperties properties) {
+        return new GrayApacheHttp5ClientBeanPostProcessor(properties);
+    }
+
     // ─── 线程池上下文传递 ─────────────────────────────────────
     @Bean
     @ConditionalOnProperty(prefix = "gray.trace.thread-pool", name = "enabled", matchIfMissing = true)
