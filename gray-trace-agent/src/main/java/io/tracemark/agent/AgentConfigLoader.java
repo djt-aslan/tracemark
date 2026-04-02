@@ -39,6 +39,8 @@ public class AgentConfigLoader {
         props.getMq().setProducer(getBool("gray.trace.mq.producer", true));
         props.getMq().setConsumer(getBool("gray.trace.mq.consumer", true));
 
+        props.getApacheHttpClient().setEnabled(getBool("gray.trace.apache-http-client.enabled", true));
+
         return props;
     }
 

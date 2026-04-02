@@ -108,6 +108,18 @@ public class GrayTraceAgent {
                     .transform(new RocketMqProducerTransformer());
         }
 
+        // 6. Apache HttpClient 4.x 出口
+        if (config.getApacheHttpClient().isEnabled()) {
+            builder = builder.type(ElementMatchers.named(
+                            "org.apache.http.impl.client.CloseableHttpClient"))
+                    .transform(new ApacheHttpClientOutboundTransformer());
+
+            // 5.x 版本
+            builder = builder.type(ElementMatchers.named(
+                            "org.apache.hc.client5.impl.classic.CloseableHttpClient"))
+                    .transform(new ApacheHttp5ClientOutboundTransformer());
+        }
+
         builder.installOn(inst);
 
         log.info("[GrayTrace] Agent installed successfully.");
