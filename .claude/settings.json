@@ -1,0 +1,15 @@
+{
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  },
+  "plugins": {
+    "superpowers@superpowers-marketplace": {
+      "version": "latest",
+      "source": "obra/superpowers-marketplace"
+    }
+  },
+  "superpowers": {
+    "autoBindOpenSpec": true,
+    "useCurrentChange": true
+  }
+}
