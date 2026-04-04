@@ -18,6 +18,8 @@ import io.tracemark.gray.core.GrayProperties;
  * -Dgray.trace.mq.enabled=false
  * -Dgray.trace.mq.producer=true
  * -Dgray.trace.mq.consumer=true
+ * -Dgray.trace.apache-http-client.enabled=true
+ * -Dgray.trace.completable-future.enabled=true
  * </pre>
  */
 public class AgentConfigLoader {
@@ -40,6 +42,8 @@ public class AgentConfigLoader {
         props.getMq().setConsumer(getBool("gray.trace.mq.consumer", true));
 
         props.getApacheHttpClient().setEnabled(getBool("gray.trace.apache-http-client.enabled", true));
+
+        props.getCompletableFuture().setEnabled(getBool("gray.trace.completable-future.enabled", true));
 
         return props;
     }
