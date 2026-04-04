@@ -1,0 +1,5 @@
+schema: spec-driven
+
+context: |
+  所有 AI 生成的制品（proposal.md、design.md、specs/**/*.md、tasks.md）必须使用中文撰写。
+  技术术语、类名、方法名、配置键等代码标识符保留英文原文。

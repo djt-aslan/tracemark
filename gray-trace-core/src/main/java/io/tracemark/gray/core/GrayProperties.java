@@ -35,6 +35,12 @@ public class GrayProperties {
     /** WebFlux/WebClient 支持 */
     private WebFlux webFlux = new WebFlux();
 
+    /** Apache HttpClient 出口拦截 */
+    private ApacheHttpClient apacheHttpClient = new ApacheHttpClient();
+
+    /** CompletableFuture 异步传递 */
+    private CompletableFuture completableFuture = new CompletableFuture();
+
     // ===================== 嵌套配置 =====================
 
     public static class Servlet {
@@ -119,6 +125,20 @@ public class GrayProperties {
         public void setEnabled(boolean enabled) { this.enabled = enabled; }
     }
 
+    public static class ApacheHttpClient {
+        /** 是否拦截 Apache HttpClient 出口并透传灰度头，默认 true */
+        private boolean enabled = true;
+        public boolean isEnabled() { return enabled; }
+        public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    }
+
+    public static class CompletableFuture {
+        /** 是否拦截 CompletableFuture 异步方法并传递灰度标，默认 true */
+        private boolean enabled = true;
+        public boolean isEnabled() { return enabled; }
+        public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    }
+
     // ===================== Getters / Setters =====================
 
     public boolean isEnabled() { return enabled; }
@@ -147,4 +167,10 @@ public class GrayProperties {
 
     public WebFlux getWebFlux() { return webFlux; }
     public void setWebFlux(WebFlux webFlux) { this.webFlux = webFlux; }
+
+    public ApacheHttpClient getApacheHttpClient() { return apacheHttpClient; }
+    public void setApacheHttpClient(ApacheHttpClient apacheHttpClient) { this.apacheHttpClient = apacheHttpClient; }
+
+    public CompletableFuture getCompletableFuture() { return completableFuture; }
+    public void setCompletableFuture(CompletableFuture completableFuture) { this.completableFuture = completableFuture; }
 }

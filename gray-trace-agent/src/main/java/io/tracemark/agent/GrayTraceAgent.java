@@ -31,6 +31,8 @@ import java.util.logging.Logger;
  *   <li>JDK HttpClient：出口注入 Header</li>
  *   <li>ThreadPoolExecutor：TTL 包装保证线程池上下文传递</li>
  *   <li>RocketMQ DefaultMQProducer：发送前注入消息属性</li>
+ *   <li>Apache HttpClient 4.x/5.x：出口注入 Header</li>
+ *   <li>CompletableFuture 异步方法：TTL 包装保证异步上下文传递</li>
  * </ul>
  */
 public class GrayTraceAgent {
@@ -106,6 +108,24 @@ public class GrayTraceAgent {
             builder = builder.type(ElementMatchers.named(
                             "org.apache.rocketmq.client.impl.producer.DefaultMQProducerImpl"))
                     .transform(new RocketMqProducerTransformer());
+        }
+
+        // 6. Apache HttpClient 4.x 出口
+        if (config.getApacheHttpClient().isEnabled()) {
+            builder = builder.type(ElementMatchers.named(
+                            "org.apache.http.impl.client.CloseableHttpClient"))
+                    .transform(new ApacheHttpClientOutboundTransformer());
+
+            // 5.x 版本
+            builder = builder.type(ElementMatchers.named(
+                            "org.apache.hc.client5.impl.classic.CloseableHttpClient"))
+                    .transform(new ApacheHttp5ClientOutboundTransformer());
+        }
+
+        // 7. CompletableFuture 异步传递
+        if (config.getCompletableFuture().isEnabled()) {
+            builder = builder.type(ElementMatchers.named("java.util.concurrent.CompletableFuture"))
+                    .transform(new CompletableFutureAsyncTransformer());
         }
 
         builder.installOn(inst);

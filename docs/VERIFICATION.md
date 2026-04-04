@@ -1,6 +1,6 @@
 # gray-trace 验证报告
 
-> 版本：1.0.0　　验证日期：2026-03-21　　验证人：灰度染色项目组
+> 版本：1.0.0　　验证日期：2026-04-02　　验证人：灰度染色项目组
 
 ---
 
@@ -57,7 +57,7 @@ gray:
 mvn test -pl gray-trace-test
 ```
 
-结果：**8/8 PASS**
+结果：**18/18 PASS**
 
 | # | 测试方法 | 场景描述 | 结果 |
 |---|---------|---------|------|
@@ -69,6 +69,16 @@ mvn test -pl gray-trace-test
 | 6 | `fullChain_asyncViaHttpRequest` | HTTP 入口 → 主线程 → `@Async` 全程携带 `gray-v4` | ✅ PASS |
 | 7 | `concurrent_requestsShouldNotInterfere` | 并发灰度/稳定请求互不污染 | ✅ PASS |
 | 8 | `contextCleanup_afterRequest` | 请求结束后 `GrayContext` 自动清理，不影响下一请求 | ✅ PASS |
+| 9 | `process_withGrayContext_shouldInjectHeader`（4.x） | 有灰度上下文时 Apache HttpClient 4.x 注入 `x-gray-tag` | ✅ PASS |
+| 10 | `process_withoutGrayContext_shouldInjectStableHeader`（4.x） | 无灰度上下文时注入默认 `stable` 标签 | ✅ PASS |
+| 11 | `process_withEmptyGrayContext_shouldInjectStableHeader`（4.x） | `set("")` 回退为 `stable`，注入 stable 标签 | ✅ PASS |
+| 12 | `beanPostProcessor_whenDisabled_shouldNotWrapBean`（4.x） | `apache-http-client.enabled=false` 时跳过注入 | ✅ PASS |
+| 13 | `beanPostProcessor_whenGloballyDisabled_shouldNotWrapBean`（4.x） | 全局 `enabled=false` 时跳过注入 | ✅ PASS |
+| 14 | `beanPostProcessor_withNonHttpClientBean_shouldReturnAsIs`（4.x） | 非 `CloseableHttpClient` Bean 原样返回 | ✅ PASS |
+| 15 | `process_withGrayContext_shouldInjectHeader`（5.x） | 有灰度上下文时 Apache HttpClient 5.x 注入 `x-gray-tag` | ✅ PASS |
+| 16 | `process_withoutGrayContext_shouldInjectStableHeader`（5.x） | 无灰度上下文时注入默认 `stable` 标签 | ✅ PASS |
+| 17 | `beanPostProcessor_whenDisabled_shouldNotWrapBean`（5.x） | `apache-http-client.enabled=false` 时跳过注入 | ✅ PASS |
+| 18 | `beanPostProcessor_withNonHttpClientBean_shouldReturnAsIs`（5.x） | 非 `CloseableHttpClient` Bean 原样返回 | ✅ PASS |
 
 ---
 
@@ -269,12 +279,14 @@ curl -s -H "x-gray-tag: gray-v1" http://localhost:8080/gray/async
 | `CompletableFuture` 传递 | 提交时手动捕获 | ✅ |
 | RestTemplate 出口注入 | `GrayRestTemplateInterceptor` | ✅ |
 | OkHttp 出口注入 | `GrayOkHttpInterceptor` | ✅ |
+| Apache HttpClient 4.x 出口注入 | `GrayApacheHttpClientInterceptor` | ✅ |
+| Apache HttpClient 5.x 出口注入 | `GrayApacheHttp5ClientInterceptor` | ✅ |
 | 并发请求隔离 | `TransmittableThreadLocal` | ✅ |
 | 请求结束上下文清理 | Filter `finally` 块 | ✅ |
 | 渠道开关（rest-template off） | `@ConditionalOnProperty` | ✅ |
 | 渠道开关（ok-http on） | `@ConditionalOnProperty` | ✅ |
 
-**11/11 场景通过**
+**11/11 场景通过** → **13/13 场景通过**
 
 ### Agent 模式
 
@@ -296,6 +308,7 @@ curl -s -H "x-gray-tag: gray-v1" http://localhost:8080/gray/async
 | Servlet 入口 | `gray.trace.servlet.enabled` | `true` | ✅ | ✅ | ✅ |
 | RestTemplate | `gray.trace.rest-template.enabled` | `true` | ✅ | ✅ | ✅（含关闭场景） |
 | OkHttp | `gray.trace.ok-http.enabled` | `true` | ✅ | ✅ | ✅ |
+| Apache HttpClient | `gray.trace.apache-http-client.enabled` | `true` | ✅ | — | ✅ |
 | JDK HttpClient | `gray.trace.http-client.enabled` | `true` | ✅ | — | ✅ |
 | OpenFeign | `gray.trace.feign.enabled` | `true` | ✅ | — | ✅ |
 | 线程池 | `gray.trace.thread-pool.enabled` | `true` | ✅ | ✅ | ✅ |

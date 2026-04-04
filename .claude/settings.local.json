@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add:*)",
+      "Bash(git commit -m ':*)",
+      "Bash(openspec list:*)",
+      "Bash(openspec status:*)"
+    ]
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  },
+  "plugins": {
+    "superpowers@superpowers-marketplace": {
+      "version": "latest",
+      "source": "obra/superpowers-marketplace"
+    }
+  }
+}

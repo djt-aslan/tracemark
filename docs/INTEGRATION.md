@@ -1,6 +1,6 @@
 # gray-trace 接入文档
 
-> 版本：1.0.0　　更新：2026-03-21
+> 版本：1.0.0　　更新：2026-04-02
 
 ## 概述
 
@@ -14,7 +14,7 @@
 两种模式均可实现：
 
 - **入口染色**：从 HTTP Header `x-gray-tag` 提取灰度标，写入线程上下文
-- **同步传递**：RestTemplate / OkHttp / JDK HttpClient / Feign 出口自动注入 Header
+- **同步传递**：RestTemplate / OkHttp / JDK HttpClient / Apache HttpClient 4.x & 5.x / Feign 出口自动注入 Header
 - **异步传递**：`@Async` / `ThreadPoolExecutor` / `CompletableFuture` 自动传递
 - **MQ 传递**：RocketMQ 生产者/消费者注入消息属性（默认关闭，按需开启）
 
@@ -52,6 +52,8 @@ gray:
       enabled: true                  # OkHttp 出口注入（默认 true）
     http-client:
       enabled: true                  # JDK 11+ HttpClient 出口注入（默认 true）
+    apache-http-client:
+      enabled: true                  # Apache HttpClient 4.x / 5.x 出口注入（默认 true）
     feign:
       enabled: true                  # OpenFeign 出口注入（默认 true）
     thread-pool:
@@ -73,6 +75,8 @@ gray:
 | RestTemplate | `BeanPostProcessor` | Bean 初始化时自动注入 `GrayRestTemplateInterceptor` |
 | OkHttpClient | `BeanPostProcessor` | Bean 初始化时自动注入 `GrayOkHttpInterceptor` |
 | JDK HttpClient | `BeanPostProcessor` | 代理包装，`send()`/`sendAsync()` 注入 Header |
+| Apache HttpClient 4.x | `BeanPostProcessor` | Bean 初始化时通过 `HttpClientBuilder` 注入 `GrayApacheHttpClientInterceptor` |
+| Apache HttpClient 5.x | `BeanPostProcessor` | Bean 初始化时通过 `HttpClientBuilder` 注入 `GrayApacheHttp5ClientInterceptor` |
 | OpenFeign | `RequestInterceptor` Bean | 自动注册，拦截所有 Feign 请求 |
 | `@Async` | `GrayTaskDecorator` | `BeanPostProcessor` 在 `ThreadPoolTaskExecutor.initialize()` 前注入 |
 | `ExecutorService` Bean | `TtlExecutors` 包装 | `postProcessAfterInitialization` 阶段包装 |
@@ -220,6 +224,7 @@ spec:
 | `gray.trace.rest-template.enabled` | `true` | RestTemplate 出口注入 |
 | `gray.trace.ok-http.enabled` | `true` | OkHttp 出口注入 |
 | `gray.trace.http-client.enabled` | `true` | JDK HttpClient 出口注入 |
+| `gray.trace.apache-http-client.enabled` | `true` | Apache HttpClient 4.x / 5.x 出口注入 |
 | `gray.trace.feign.enabled` | `true` | OpenFeign 出口注入 |
 | `gray.trace.thread-pool.enabled` | `true` | 线程池上下文传递 |
 | `gray.trace.thread-pool.async-decorator` | `true` | `@Async` TaskDecorator（Starter 模式） |
@@ -246,7 +251,7 @@ Java 微服务（Starter 或 Agent 接入）
   │
   ├─ [业务代码]  GrayContext.get() == "gray-v1"
   │
-  ├─ [RestTemplate / OkHttp / Feign]
+  ├─ [RestTemplate / OkHttp / Apache HttpClient / Feign]
   │       出口请求自动追加 x-gray-tag: gray-v1
   │       └─ 下游服务收到 x-gray-tag: gray-v1，重复以上流程
   │
