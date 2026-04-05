@@ -11,5 +11,31 @@
   "superpowers": {
     "autoBindOpenSpec": true,
     "useCurrentChange": true
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "if": "tool_input.command && tool_input.command.includes('git commit')",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "执行 check-code skill 进行代码质量检查。输入参数：$ARGUMENTS。检查完成后返回 JSON 结果：{\"continue\": true/false, \"reason\": \"检查结果\"}",
+            "model": "astron-code-latest"
+          }
+        ]
+      },
+      {
+        "matcher": "Skill",
+        "if": "tool_input.skill && (tool_input.skill.includes('writing-plans') || tool_input.skill.includes('superpowers:writing-plans'))",
+        "hooks": [
+          {
+            "type": "agent",
+            "prompt": "执行 check-spec skill 进行 Spec 规约检查。输入参数：$ARGUMENTS。检查完成后返回 JSON 结果：{\"continue\": true/false, \"reason\": \"检查结果\"}",
+            "model": "astron-code-latest"
+          }
+        ]
+      }
+    ]
   }
 }
