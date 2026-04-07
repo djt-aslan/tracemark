@@ -77,37 +77,37 @@ public class GrayVerifyController {
     /** 单独验证 Servlet 入口提取 */
     @GetMapping("/servlet")
     public Map<String, String> verifyServlet() {
-        return Map.of(
-                "thread", Thread.currentThread().getName(),
-                "gray_tag", GrayContext.get()
-        );
+        Map<String, String> result = new LinkedHashMap<>();
+        result.put("thread", Thread.currentThread().getName());
+        result.put("gray_tag", GrayContext.get());
+        return result;
     }
 
     /** 单独验证 @Async */
     @GetMapping("/async")
     public Map<String, Object> verifyAsync() throws ExecutionException, InterruptedException {
-        return Map.of(
-                "main_thread_tag", GrayContext.get(),
-                "async_thread_tag", asyncService.asyncMethod().get()
-        );
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("main_thread_tag", GrayContext.get());
+        result.put("async_thread_tag", asyncService.asyncMethod().get());
+        return result;
     }
 
     /** 单独验证线程池 */
     @GetMapping("/threadpool")
     public Map<String, Object> verifyThreadPool() throws ExecutionException, InterruptedException {
-        return Map.of(
-                "main_thread_tag", GrayContext.get(),
-                "pool_thread_tag", asyncService.threadPoolExecutor().get()
-        );
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("main_thread_tag", GrayContext.get());
+        result.put("pool_thread_tag", asyncService.threadPoolExecutor().get());
+        return result;
     }
 
     /** 单独验证 HTTP 出口 */
     @GetMapping("/http")
     public Map<String, Object> verifyHttp() {
-        return Map.of(
-                "main_thread_tag", GrayContext.get(),
-                "rest_template", httpClientService.callViaRestTemplate(),
-                "okhttp", httpClientService.callViaOkHttp()
-        );
+        Map<String, Object> result = new LinkedHashMap<>();
+        result.put("main_thread_tag", GrayContext.get());
+        result.put("rest_template", httpClientService.callViaRestTemplate());
+        result.put("okhttp", httpClientService.callViaOkHttp());
+        return result;
     }
 }
