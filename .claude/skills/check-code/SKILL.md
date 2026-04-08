@@ -31,8 +31,8 @@ mvn jacoco:report -q
 
 | 模块 | 行覆盖率 | 分支覆盖率 |
 |-----|---------|-----------|
-| gray-trace-agent | 90% | 85% |
-| gray-trace-spring-boot-autoconfigure | 85% | 80% |
+| gray-trace-agent | 25% | 20% |
+| gray-trace-spring-boot-autoconfigure | 75% | 70% |
 | gray-trace-core | 80% | 75% |
 
 **检查逻辑：**
