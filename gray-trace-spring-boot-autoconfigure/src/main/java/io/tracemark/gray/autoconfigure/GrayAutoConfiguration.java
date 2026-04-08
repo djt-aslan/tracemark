@@ -76,15 +76,6 @@ public class GrayAutoConfiguration {
         return new GrayOkHttpBeanPostProcessor(properties);
     }
 
-    // ─── JDK HttpClient 出口 ──────────────────────────────────
-    @Bean
-    @ConditionalOnClass(name = "java.net.http.HttpClient")
-    @ConditionalOnProperty(prefix = "gray.trace.http-client", name = "enabled", matchIfMissing = true)
-    public GrayHttpClientBeanPostProcessor grayHttpClientBeanPostProcessor(
-            GrayProperties properties) {
-        return new GrayHttpClientBeanPostProcessor(properties);
-    }
-
     // ─── Apache HttpClient 4.x 出口 ──────────────────────────
     @Bean
     @ConditionalOnClass(name = "org.apache.http.impl.client.CloseableHttpClient")
