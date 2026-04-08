@@ -11,5 +11,11 @@
   "superpowers": {
     "autoBindOpenSpec": true,
     "useCurrentChange": true
+  },
+  "_comment1": "默认模式：自动允许文件读写，仅 Bash 命令需确认",
+    "permissions": {
+    "defaultMode": "acceptEdits",
+    "allow": ["Read(./**)", "Write(./**)", "Edit(./**)", "Git(./**)", "Npm(./**)", "Pip(./**)","Bash(./** cd)","Bash(./** ls)","Bash(./** ll)","Bash(./** cat)","Bash(./** grep)","Bash(./** find)","Bash(./** mkdir)","Bash(./** echo)","Bash(./** head)","Bash(./** tail)","Bash(./** mvn)"],
+    "deny": ["Read(./.env*)", "Edit(./.env*)", "Bash(rm -rf)", "Bash(curl)", "Bash(wget)"]
   }
 }

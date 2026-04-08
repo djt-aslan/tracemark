@@ -35,6 +35,11 @@ mvn jacoco:report -q
 | gray-trace-spring-boot-autoconfigure | 75% | 70% |
 | gray-trace-core | 80% | 75% |
 
+> **说明**：
+> - `gray-trace-agent` 阈值较低，因为 ByteBuddy Advice 代码需要 agent 环境才能执行，单元测试只能模拟逻辑
+> - `gray-trace-spring-boot-autoconfigure` 阈值中等，部分 AutoConfiguration 类依赖特定框架类加载条件
+> - `gray-trace-core` 阈值较高，核心业务逻辑应充分测试
+
 **检查逻辑：**
 1. 识别本次修改涉及的模块
 2. 读取对应模块的覆盖率报告
