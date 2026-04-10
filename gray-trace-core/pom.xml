@@ -11,7 +11,7 @@
 
     <artifactId>gray-trace-core</artifactId>
     <name>gray-trace :: core</name>
-    <description>灰度上下文核心，无框架依赖，可被 Starter 和 Agent 共同使用</description>
+    <description>灰度上下文核心，无框架依赖，供 Agent 模式使用</description>
 
     <dependencies>
         <dependency>

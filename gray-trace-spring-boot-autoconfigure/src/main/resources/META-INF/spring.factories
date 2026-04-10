@@ -1,5 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  io.tracemark.gray.autoconfigure.GrayAutoConfiguration,\
-  io.tracemark.gray.autoconfigure.GrayFeignAutoConfiguration,\
-  io.tracemark.gray.autoconfigure.GrayRocketMqAutoConfiguration,\
-  io.tracemark.gray.autoconfigure.GrayWebFluxAutoConfiguration

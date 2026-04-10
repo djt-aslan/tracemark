@@ -12,10 +12,7 @@
 
     <modules>
         <module>gray-trace-core</module>
-        <module>gray-trace-spring-boot-autoconfigure</module>
-        <module>gray-trace-spring-boot-starter</module>
         <module>gray-trace-agent</module>
-        <module>gray-trace-test</module>
     </modules>
 
     <properties>
@@ -48,16 +45,6 @@
             <dependency>
                 <groupId>io.tracemark</groupId>
                 <artifactId>gray-trace-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.tracemark</groupId>
-                <artifactId>gray-trace-spring-boot-autoconfigure</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.tracemark</groupId>
-                <artifactId>gray-trace-spring-boot-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

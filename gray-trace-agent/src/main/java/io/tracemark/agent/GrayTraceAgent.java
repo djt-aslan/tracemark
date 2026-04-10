@@ -77,18 +77,18 @@ public class GrayTraceAgent {
 
         // 1. Servlet 入口（javax）
         if (config.getServlet().isEnabled()) {
-            builder = builder.type(ElementMatchers.named("javax.servlet.http.HttpServlet"))
+            builder = builder.type(ElementMatchers.hasSuperType(ElementMatchers.named("javax.servlet.http.HttpServlet")))
                     .transform(new ServletInboundTransformer());
 
             // jakarta 版
-            builder = builder.type(ElementMatchers.named("jakarta.servlet.http.HttpServlet"))
+            builder = builder.type(ElementMatchers.hasSuperType(ElementMatchers.named("jakarta.servlet.http.HttpServlet")))
                     .transform(new JakartaServletInboundTransformer());
         }
 
         // 2. RestTemplate 出口
         if (config.getRestTemplate().isEnabled()) {
-            builder = builder.type(ElementMatchers.named(
-                            "org.springframework.http.client.AbstractClientHttpRequest"))
+            builder = builder.type(ElementMatchers.hasSuperType(ElementMatchers.named(
+                            "org.springframework.http.client.AbstractClientHttpRequest")))
                     .transform(new RestTemplateOutboundTransformer());
         }
 
@@ -113,13 +113,13 @@ public class GrayTraceAgent {
 
         // 6. Apache HttpClient 4.x 出口
         if (config.getApacheHttpClient().isEnabled()) {
-            builder = builder.type(ElementMatchers.named(
-                            "org.apache.http.impl.client.CloseableHttpClient"))
+            builder = builder.type(ElementMatchers.hasSuperType(ElementMatchers.named(
+                            "org.apache.http.impl.client.CloseableHttpClient")))
                     .transform(new ApacheHttpClientOutboundTransformer());
 
             // 5.x 版本
-            builder = builder.type(ElementMatchers.named(
-                            "org.apache.hc.client5.impl.classic.CloseableHttpClient"))
+            builder = builder.type(ElementMatchers.hasSuperType(ElementMatchers.named(
+                            "org.apache.hc.client5.impl.classic.CloseableHttpClient")))
                     .transform(new ApacheHttp5ClientOutboundTransformer());
         }
 

@@ -1,17 +1,16 @@
 # gray-trace 接入文档
 
-> 版本：1.0.0　　更新：2026-04-02
+> 版本：1.0.0　　更新：2026-04-10
 
 ## 概述
 
-`gray-trace` 是全链路流量灰度染色组件，支持两种接入方式：
+`gray-trace` 是全链路流量灰度染色组件，通过 **Java Agent** 方式接入：
 
 | 接入方式 | 适用场景 | 改动量 |
 |---------|---------|--------|
-| **Starter 模式** | 已有 Spring Boot Maven 项目，可修改 pom | 仅加一行 `<dependency>` |
 | **Agent 模式** | 无法改动代码/依赖，或使用 Spring Boot 3.x | 仅加 JVM 启动参数 |
 
-两种模式均可实现：
+Agent 模式可实现：
 
 - **入口染色**：从 HTTP Header `x-gray-tag` 提取灰度标，写入线程上下文
 - **同步传递**：RestTemplate / OkHttp / JDK HttpClient / Apache HttpClient 4.x & 5.x / Feign 出口自动注入 Header
@@ -20,78 +19,7 @@
 
 ---
 
-## 一、Starter 模式（推荐）
-
-### 1. 添加依赖
-
-在业务服务的 `pom.xml` 中加入：
-
-```xml
-<dependency>
-    <groupId>io.tracemark</groupId>
-    <artifactId>gray-trace-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
-</dependency>
-```
-
-> **仅此一步**，Spring Boot 自动装配会完成所有初始化，无需任何代码改动。
-
-### 2. 配置（可选）
-
-所有配置均有默认值，**不写配置即可正常工作**。按需在 `application.yml` 中覆盖：
-
-```yaml
-gray:
-  trace:
-    enabled: true                    # 全局总开关（默认 true）
-    servlet:
-      enabled: true                  # Servlet 入口过滤（默认 true）
-    rest-template:
-      enabled: true                  # RestTemplate 出口注入（默认 true）
-    ok-http:
-      enabled: true                  # OkHttp 出口注入（默认 true）
-    http-client:
-      enabled: true                  # JDK 11+ HttpClient 出口注入（默认 true）
-    apache-http-client:
-      enabled: true                  # Apache HttpClient 4.x / 5.x 出口注入（默认 true）
-    feign:
-      enabled: true                  # OpenFeign 出口注入（默认 true）
-    thread-pool:
-      enabled: true                  # 线程池上下文传递（默认 true）
-      async-decorator: true          # @Async TaskDecorator（默认 true）
-    mq:
-      enabled: false                 # MQ 染色总开关（默认 false，需显式开启）
-      producer: true                 # RocketMQ 生产者注入 grayTag 消息属性
-      consumer: true                 # RocketMQ 消费者恢复 GrayContext
-    web-flux:
-      enabled: false                 # WebFlux 支持（默认 false，MVC 项目不需要）
-```
-
-### 3. 自动生效的能力
-
-| 框架/场景 | 生效方式 | 说明 |
-|----------|---------|------|
-| Servlet 入口 | `GrayServletFilter` | 提取 `x-gray-tag` Header → `GrayContext.set()` |
-| RestTemplate | `BeanPostProcessor` | Bean 初始化时自动注入 `GrayRestTemplateInterceptor` |
-| OkHttpClient | `BeanPostProcessor` | Bean 初始化时自动注入 `GrayOkHttpInterceptor` |
-| JDK HttpClient | `BeanPostProcessor` | 代理包装，`send()`/`sendAsync()` 注入 Header |
-| Apache HttpClient 4.x | `BeanPostProcessor` | Bean 初始化时通过 `HttpClientBuilder` 注入 `GrayApacheHttpClientInterceptor` |
-| Apache HttpClient 5.x | `BeanPostProcessor` | Bean 初始化时通过 `HttpClientBuilder` 注入 `GrayApacheHttp5ClientInterceptor` |
-| OpenFeign | `RequestInterceptor` Bean | 自动注册，拦截所有 Feign 请求 |
-| `@Async` | `GrayTaskDecorator` | `BeanPostProcessor` 在 `ThreadPoolTaskExecutor.initialize()` 前注入 |
-| `ExecutorService` Bean | `TtlExecutors` 包装 | `postProcessAfterInitialization` 阶段包装 |
-| RocketMQ Producer | `SendMessageHook` | 发送时注入 `UserProperty["grayTag"]` |
-| RocketMQ Consumer | 动态代理包装 Listener | 消费前从 `MessageExt` 恢复 `GrayContext` |
-
-### 4. 注意事项
-
-- **Spring Boot 版本**：Starter 模式仅支持 Spring Boot **2.x（javax Servlet）**。Spring Boot 3.x 请使用 Agent 模式。
-- **HttpClient Bean**：`JDK HttpClient` 需注册为 Spring Bean 才能被 BPP 拦截。
-- **自定义线程池**：若 `ExecutorService` 未注册为 Bean，BPP 无法包装，请参考 Agent 模式或手动用 `TtlExecutors.getTtlExecutorService()` 包装。
-
----
-
-## 二、Agent 模式
+## 一、Agent 模式
 
 ### 1. 获取 Agent JAR
 
@@ -213,9 +141,9 @@ spec:
 
 ---
 
-## 三、配置参数速查
+## 二、配置参数速查
 
-所有参数在 Starter 模式中通过 `application.yml` 配置；在 Agent 模式中通过 JVM `-D` 系统属性传入。
+所有参数通过 JVM `-D` 系统属性传入。
 
 | 参数 | 默认值 | 说明 |
 |------|--------|------|
@@ -227,26 +155,24 @@ spec:
 | `gray.trace.apache-http-client.enabled` | `true` | Apache HttpClient 4.x / 5.x 出口注入 |
 | `gray.trace.feign.enabled` | `true` | OpenFeign 出口注入 |
 | `gray.trace.thread-pool.enabled` | `true` | 线程池上下文传递 |
-| `gray.trace.thread-pool.async-decorator` | `true` | `@Async` TaskDecorator（Starter 模式） |
 | `gray.trace.mq.enabled` | **`false`** | MQ 染色总开关（**默认关闭**） |
 | `gray.trace.mq.producer` | `true` | RocketMQ 生产者注入消息属性 |
 | `gray.trace.mq.consumer` | `true` | RocketMQ 消费者恢复上下文 |
-| `gray.trace.web-flux.enabled` | `false` | WebFlux 支持（Starter 模式） |
 
 > **为什么 MQ 默认关闭？**
 > MQ 消息可能被延迟消费、重试、或路由到不同消费者，盲目透传灰度标可能导致消费者误路由到灰度版本。请在理解业务影响后手动开启。
 
 ---
 
-## 四、工作原理
+## 三、工作原理
 
 ```
 APISIX 网关
   │  注入 x-gray-tag: gray-v1
   ▼
-Java 微服务（Starter 或 Agent 接入）
+Java 微服务（Agent 接入）
   │
-  ├─ [Servlet Filter / ByteBuddy 插桩]
+  ├─ [ByteBuddy 插桩]
   │       提取 x-gray-tag Header → GrayContext.set("gray-v1")
   │
   ├─ [业务代码]  GrayContext.get() == "gray-v1"
@@ -266,9 +192,9 @@ Java 微服务（Starter 或 Agent 接入）
 
 ---
 
-## 五、Istio 路由配置
+## 四、Istio 路由配置
 
-Agent/Starter 负责在服务间传递 `x-gray-tag`，Istio 根据该 Header 决定路由目标：
+Agent 负责在服务间传递 `x-gray-tag`，Istio 根据该 Header 决定路由目标：
 
 ```yaml
 # VirtualService：按 x-gray-tag 路由
@@ -309,7 +235,7 @@ spec:
 
 ---
 
-## 六、验证接入是否成功
+## 五、验证接入是否成功
 
 启动服务后，发送带 `x-gray-tag` 的请求：
 
@@ -346,7 +272,7 @@ log.info("当前灰度标: {}", GrayContext.get()); // 期望输出 gray-v1
 
 ---
 
-## 七、常见问题
+## 六、常见问题
 
 ### Q：启动时报 `ClassNotFoundException: io.tracemark.agent.GrayTraceAgent`
 
@@ -356,13 +282,9 @@ log.info("当前灰度标: {}", GrayContext.get()); // 期望输出 gray-v1
 ls -la /opt/agents/gray-trace-agent-1.0.0.jar
 ```
 
-### Q：`@Async` 方法中灰度标丢失（Starter 模式）
+### Q：`@Async` 方法中灰度标丢失
 
-需要将 `ThreadPoolTaskExecutor` 注册为 Spring Bean，BPP 才能注入 `GrayTaskDecorator`。直接 `new ThreadPoolTaskExecutor()` 不会被拦截。
-
-### Q：`@Async` 方法中灰度标丢失（Agent 模式）
-
-Agent 通过 ByteBuddy 插桩 `ThreadPoolExecutor.execute()`，但若使用了自定义线程工厂且绕过标准 `execute()`，可能失效。切换为 Starter 模式更可靠。
+Agent 通过 ByteBuddy 插桩 `ThreadPoolExecutor.execute()`，但若使用了自定义线程工厂且绕过标准 `execute()`，可能失效。
 
 ### Q：多个 `-javaagent` 与 SkyWalking 冲突
 
@@ -376,16 +298,12 @@ java -javaagent:/opt/skywalking-agent/skywalking-agent.jar \
 
 ByteBuddy 与 SkyWalking 插桩互不干扰。
 
-### Q：Spring Boot 3.x 使用 Starter 模式报错
-
-Starter 模式当前仅支持 Spring Boot 2.x（javax Servlet）。Spring Boot 3.x 请使用 Agent 模式（支持 jakarta Servlet，自动识别）。
-
 ### Q：如何验证某个开关是否生效
 
 将该渠道开关设为 `false`，发送灰度请求，观察对应渠道的下游响应中是否不含 `x-gray-tag`：
 
-```yaml
-gray.trace.rest-template.enabled: false
+```bash
+-Dgray.trace.rest-template.enabled=false
 ```
 
 ```bash
