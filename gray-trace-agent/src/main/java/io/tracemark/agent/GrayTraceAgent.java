@@ -55,6 +55,7 @@ public class GrayTraceAgent {
 
     private static void install(String agentArgs, Instrumentation inst) {
         GrayProperties config = AgentConfigLoader.load();
+        GrayTraceLogger.init(config);
 
         if (!config.isEnabled()) {
             log.info("[GrayTrace] Agent disabled (gray.trace.enabled=false), skip instrumentation.");

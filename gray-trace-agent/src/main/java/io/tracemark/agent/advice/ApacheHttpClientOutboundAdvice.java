@@ -1,5 +1,6 @@
 package io.tracemark.agent.advice;
 
+import io.tracemark.agent.GrayTraceLogger;
 import io.tracemark.gray.core.GrayConstants;
 import io.tracemark.gray.core.GrayContext;
 import net.bytebuddy.asm.Advice;
@@ -22,7 +23,11 @@ public class ApacheHttpClientOutboundAdvice {
                 HttpRequest request = (HttpRequest) arg;
                 if (GrayContext.isGray()
                         && !request.containsHeader(GrayConstants.HEADER_GRAY_TAG)) {
-                    request.setHeader(GrayConstants.HEADER_GRAY_TAG, GrayContext.get());
+                    String tag = GrayContext.get();
+                    request.setHeader(GrayConstants.HEADER_GRAY_TAG, tag);
+
+                    // 日志输出
+                    GrayTraceLogger.logOutbound(tag, request.getRequestLine().getUri(), Thread.currentThread().getName());
                 }
                 return;
             }

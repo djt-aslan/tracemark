@@ -41,6 +41,9 @@ public class GrayProperties {
     /** CompletableFuture 异步传递 */
     private CompletableFuture completableFuture = new CompletableFuture();
 
+    /** Agent 链路追踪日志配置 */
+    private Log log = new Log();
+
     // ===================== 嵌套配置 =====================
 
     public static class Servlet {
@@ -139,6 +142,13 @@ public class GrayProperties {
         public void setEnabled(boolean enabled) { this.enabled = enabled; }
     }
 
+    public static class Log {
+        /** 是否开启 Agent 链路追踪日志，默认 false（生产环境关闭） */
+        private boolean enabled = false;
+        public boolean isEnabled() { return enabled; }
+        public void setEnabled(boolean enabled) { this.enabled = enabled; }
+    }
+
     // ===================== Getters / Setters =====================
 
     public boolean isEnabled() { return enabled; }
@@ -173,4 +183,7 @@ public class GrayProperties {
 
     public CompletableFuture getCompletableFuture() { return completableFuture; }
     public void setCompletableFuture(CompletableFuture completableFuture) { this.completableFuture = completableFuture; }
+
+    public Log getLog() { return log; }
+    public void setLog(Log log) { this.log = log; }
 }

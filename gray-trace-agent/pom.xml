@@ -31,6 +31,13 @@
             <artifactId>transmittable-thread-local</artifactId>
         </dependency>
 
+        <!-- 日志门面：shade 打包，用于 Agent 链路追踪日志 -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+
         <!-- 编译期依赖：Advice 类需要引用目标框架类型，provided 不打进 fat JAR -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -129,6 +136,11 @@
                                 <relocation>
                                     <pattern>com.alibaba.ttl3</pattern>
                                     <shadedPattern>io.tracemark.shade.ttl3</shadedPattern>
+                                </relocation>
+                                <!-- shade SLF4J 避免与应用日志实现冲突 -->
+                                <relocation>
+                                    <pattern>org.slf4j</pattern>
+                                    <shadedPattern>io.tracemark.shade.slf4j</shadedPattern>
                                 </relocation>
                             </relocations>
                             <filters>

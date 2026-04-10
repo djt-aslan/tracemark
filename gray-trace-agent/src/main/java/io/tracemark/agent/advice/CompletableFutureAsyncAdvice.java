@@ -2,6 +2,7 @@ package io.tracemark.agent.advice;
 
 import com.alibaba.ttl.TtlCallable;
 import com.alibaba.ttl.TtlRunnable;
+import io.tracemark.agent.GrayTraceLogger;
 import io.tracemark.gray.core.GrayContext;
 import net.bytebuddy.asm.Advice;
 
@@ -32,6 +33,8 @@ public class CompletableFutureAsyncAdvice {
         @Advice.OnMethodEnter
         public static void onEnter(@Advice.Argument(value = 0, readOnly = false) Supplier<?> supplier) {
             if (supplier != null) {
+                String tag = GrayContext.get();
+                GrayTraceLogger.logAsync(tag, "CompletableFuture", "Supplier", Thread.currentThread().getName());
                 // Supplier 需要转换为 Callable 再包装
                 Supplier<?> original = supplier;
                 supplier = () -> {
@@ -53,6 +56,8 @@ public class CompletableFutureAsyncAdvice {
         @Advice.OnMethodEnter
         public static void onEnter(@Advice.Argument(value = 0, readOnly = false) Runnable runnable) {
             if (runnable != null && !(runnable instanceof TtlRunnable)) {
+                String tag = GrayContext.get();
+                GrayTraceLogger.logAsync(tag, "CompletableFuture", "Runnable", Thread.currentThread().getName());
                 runnable = TtlRunnable.get(runnable);
             }
         }
@@ -64,6 +69,8 @@ public class CompletableFutureAsyncAdvice {
         @Advice.OnMethodEnter
         public static void onEnter(@Advice.Argument(value = 0, readOnly = false) Function<?, ?> fn) {
             if (fn != null) {
+                String tag = GrayContext.get();
+                GrayTraceLogger.logAsync(tag, "CompletableFuture", "Function", Thread.currentThread().getName());
                 // 捕获当前灰度上下文，在执行时恢复
                 String capturedTag = GrayContext.get();
                 Function<Object, Object> original = (Function<Object, Object>) fn;
@@ -85,6 +92,8 @@ public class CompletableFutureAsyncAdvice {
         @Advice.OnMethodEnter
         public static void onEnter(@Advice.Argument(value = 0, readOnly = false) Consumer<?> consumer) {
             if (consumer != null) {
+                String tag = GrayContext.get();
+                GrayTraceLogger.logAsync(tag, "CompletableFuture", "Consumer", Thread.currentThread().getName());
                 // 捕获当前灰度上下文，在执行时恢复
                 String capturedTag = GrayContext.get();
                 Consumer<Object> original = (Consumer<Object>) consumer;
@@ -106,6 +115,8 @@ public class CompletableFutureAsyncAdvice {
         @Advice.OnMethodEnter
         public static void onEnter(@Advice.Argument(value = 0, readOnly = false) Runnable runnable) {
             if (runnable != null && !(runnable instanceof TtlRunnable)) {
+                String tag = GrayContext.get();
+                GrayTraceLogger.logAsync(tag, "CompletableFuture", "Runnable", Thread.currentThread().getName());
                 runnable = TtlRunnable.get(runnable);
             }
         }

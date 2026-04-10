@@ -1,89 +1,89 @@
 ---
 name: "OPSX: Apply"
-description: 从 OpenSpec 变更中实现任务（实验性）
+description: Implement tasks from an OpenSpec change (Experimental)
 category: Workflow
 tags: [workflow, artifacts, experimental]
 ---
 
-从 OpenSpec 变更中实现任务。
+Implement tasks from an OpenSpec change.
 
-**输入**：可选择指定变更名称（例如 `/opsx:apply add-auth`）。若未指定，检查是否能从对话上下文中推断。若模糊不清，必须提示用户选择可用的变更。
+**Input**: Optionally specify a change name (e.g., `/opsx:apply add-auth`). If omitted, check if it can be inferred from conversation context. If vague or ambiguous you MUST prompt for available changes.
 
-**步骤**
+**Steps**
 
-1. **选择变更**
+1. **Select the change**
 
-   若提供了名称，直接使用。否则：
-   - 若用户在对话中提及了某个变更，则从上下文推断
-   - 若只有一个活跃变更，则自动选择
-   - 若存在歧义，运行 `openspec list --json` 获取可用变更，并使用 **AskUserQuestion tool** 让用户选择
+   If a name is provided, use it. Otherwise:
+   - Infer from conversation context if the user mentioned a change
+   - Auto-select if only one active change exists
+   - If ambiguous, run `openspec list --json` to get available changes and use the **AskUserQuestion tool** to let the user select
 
-   始终声明："Using change: <name>"，并说明如何覆盖（例如 `/opsx:apply <other>`）。
+   Always announce: "Using change: <name>" and how to override (e.g., `/opsx:apply <other>`).
 
-2. **检查状态以了解 schema**
+2. **Check status to understand the schema**
    ```bash
    openspec status --change "<name>" --json
    ```
-   解析 JSON 以了解：
-   - `schemaName`：正在使用的工作流（例如 "spec-driven"）
-   - 哪个 artifact 包含任务（spec-driven 通常为 "tasks"，其他情况请查看 status）
+   Parse the JSON to understand:
+   - `schemaName`: The workflow being used (e.g., "spec-driven")
+   - Which artifact contains the tasks (typically "tasks" for spec-driven, check status for others)
 
-3. **获取 apply 指令**
+3. **Get apply instructions**
 
    ```bash
    openspec instructions apply --change "<name>" --json
    ```
 
-   返回内容：
-   - 上下文文件路径（因 schema 而异）
-   - 进度（总数、已完成、剩余）
-   - 带状态的任务列表
-   - 基于当前状态的动态指令
+   This returns:
+   - Context file paths (varies by schema)
+   - Progress (total, complete, remaining)
+   - Task list with status
+   - Dynamic instruction based on current state
 
-   **处理各状态：**
-   - 若 `state: "blocked"`（缺少 artifacts）：显示消息，建议使用 `/opsx:continue`
-   - 若 `state: "all_done"`：表示祝贺，建议归档
-   - 其他情况：继续实现
+   **Handle states:**
+   - If `state: "blocked"` (missing artifacts): show message, suggest using `/opsx:continue`
+   - If `state: "all_done"`: congratulate, suggest archive
+   - Otherwise: proceed to implementation
 
-4. **读取上下文文件**
+4. **Read context files**
 
-   读取 apply 指令输出中 `contextFiles` 列出的文件。
-   具体文件取决于所用 schema：
-   - **spec-driven**：proposal、specs、design、tasks
-   - 其他 schema：按 CLI 输出中的 contextFiles 操作
+   Read the files listed in `contextFiles` from the apply instructions output.
+   The files depend on the schema being used:
+   - **spec-driven**: proposal, specs, design, tasks
+   - Other schemas: follow the contextFiles from CLI output
 
-5. **显示当前进度**
+5. **Show current progress**
 
-   展示：
-   - 正在使用的 schema
-   - 进度："N/M tasks complete"
-   - 剩余任务概览
-   - 来自 CLI 的动态指令
+   Display:
+   - Schema being used
+   - Progress: "N/M tasks complete"
+   - Remaining tasks overview
+   - Dynamic instruction from CLI
 
-6. **实现任务（循环直至完成或受阻）**
+6. **Implement tasks (loop until done or blocked)**
 
-   对每个待处理任务：
-   - 显示正在处理哪个任务
-   - 进行所需的代码更改
-   - 保持更改最小化且聚焦
-   - 在任务文件中将任务标记为完成：`- [ ]` → `- [x]`
-   - 继续下一个任务
+   For each pending task:
+   - Show which task is being worked on
+   - Make the code changes required
+   - Keep changes minimal and focused
+   - Mark task complete in the tasks file: `- [ ]` → `- [x]`
+   - Continue to next task
 
-   **在以下情况暂停：**
-   - 任务不明确 → 请求澄清
-   - 实现揭示了设计问题 → 建议更新 artifacts
-   - 遇到错误或阻碍 → 上报并等待指导
-   - 用户中断
+   **Pause if:**
+   - Task is unclear → ask for clarification
+   - Implementation reveals a design issue → suggest updating artifacts
+   - Error or blocker encountered → report and wait for guidance
+   - User interrupts
 
-7. **完成或暂停时，显示状态**
+7. **On completion or pause, show status**
 
-   展示：
-   - 本次会话完成的任务
-   - 总体进度："N/M tasks complete"
-   - 若全部完成：建议归档
-   - 若暂停：解释原因并等待指导
+   Display:
+   - Tasks completed this session
+   - Overall progress: "N/M tasks complete"
+   - If all done: suggest archive
+   - If paused: explain why and wait for guidance
 
-**实现过程中的输出**
+**Output During Implementation**
 
 ```
 ## Implementing: <change-name> (schema: <schema-name>)
@@ -97,7 +97,7 @@ Working on task 4/7: <task description>
 ✓ Task complete
 ```
 
-**完成时的输出**
+**Output On Completion**
 
 ```
 ## Implementation Complete
@@ -114,7 +114,7 @@ Working on task 4/7: <task description>
 All tasks complete! You can archive this change with `/opsx:archive`.
 ```
 
-**暂停时的输出（遇到问题）**
+**Output On Pause (Issue Encountered)**
 
 ```
 ## Implementation Paused
@@ -134,19 +134,19 @@ All tasks complete! You can archive this change with `/opsx:archive`.
 What would you like to do?
 ```
 
-**约束规则**
-- 持续处理任务直至完成或受阻
-- 开始前始终读取上下文文件（来自 apply 指令输出）
-- 若任务不明确，暂停并询问后再实现
-- 若实现揭示问题，暂停并建议更新 artifacts
-- 代码更改保持最小化，限定在每个任务范围内
-- 完成每个任务后立即更新任务复选框
-- 遇到错误、阻碍或需求不清时暂停——不要猜测
-- 使用 CLI 输出中的 contextFiles，不要假设特定文件名
+**Guardrails**
+- Keep going through tasks until done or blocked
+- Always read context files before starting (from the apply instructions output)
+- If task is ambiguous, pause and ask before implementing
+- If implementation reveals issues, pause and suggest artifact updates
+- Keep code changes minimal and scoped to each task
+- Update task checkbox immediately after completing each task
+- Pause on errors, blockers, or unclear requirements - don't guess
+- Use contextFiles from CLI output, don't assume specific file names
 
-**流式工作流集成**
+**Fluid Workflow Integration**
 
-此 skill 支持"对变更执行操作"模型：
+This skill supports the "actions on a change" model:
 
-- **可随时调用**：在所有 artifacts 完成之前（若任务已存在）、部分实现之后、与其他操作交替进行
-- **允许更新 artifacts**：若实现揭示设计问题，建议更新 artifacts——不要锁定阶段，灵活工作
+- **Can be invoked anytime**: Before all artifacts are done (if tasks exist), after partial implementation, interleaved with other actions
+- **Allows artifact updates**: If implementation reveals design issues, suggest updating artifacts - not phase-locked, work fluidly
