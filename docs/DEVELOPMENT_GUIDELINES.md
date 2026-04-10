@@ -11,18 +11,17 @@
 | 模块 | 行覆盖率 | 分支覆盖率 |
 |-----|---------|-----------|
 | gray-trace-agent | 90% | 85% |
-| gray-trace-spring-boot-autoconfigure | 85% | 80% |
 | gray-trace-core | 80% | 75% |
 
 ### 必须覆盖的测试场景
 
-| 场景类型 | Agent 模式 | Spring Boot 模式 |
-|---------|-----------|-----------------|
-| 正向场景 | ✓ | ✓ |
-| 空值/null 场景 | ✓ | ✓ |
-| 配置开关场景 | ✓ | ✓ |
-| 幂等性场景 | ✓ | ✓ |
-| 异常场景 | ✓ | ✓ |
+| 场景类型 | Agent 模式 |
+|---------|-----------|
+| 正向场景 | ✓ |
+| 空值/null 场景 | ✓ |
+| 配置开关场景 | ✓ |
+| 幂等性场景 | ✓ |
+| 异常场景 | ✓ |
 
 ### 覆盖率命令
 
@@ -33,21 +32,20 @@ mvn test jacoco:report
 
 ---
 
-## 2. 双模式开发
+## 2. Agent 模式开发
 
-tracemark 支持 Spring Boot Starter 和 Java Agent 两种模式：
+tracemark 使用 Java Agent 模式实现字节码插桩：
 
 ```
 需要修改字节码？
-    ├── 是 → Agent 模式（Advice + Transformer + ByteBuddy）
-    └── 否 → Spring Boot 模式（Interceptor + BeanPostProcessor + @Conditional）
+    └── 是 → Agent 模式（Advice + Transformer + ByteBuddy）
 ```
 
 ### Spec 编写要求
 
-- 双模式功能需分别编写 Requirement
+- 每个 Agent 功能需编写完整 Requirement
 - 使用 `## Agent 模式` 分隔 Agent 相关规格
-- 每个模式需覆盖完整场景
+- 需覆盖完整场景
 
 ### Agent 模式必须使用 TDD
 

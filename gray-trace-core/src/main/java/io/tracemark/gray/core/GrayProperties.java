@@ -1,10 +1,9 @@
 package io.tracemark.gray.core;
 
 /**
- * 灰度追踪配置属性（POJO，供 Starter 和 Agent 共用）
+ * 灰度追踪配置属性（POJO，供 Agent 使用）
  *
- * <p>Spring Boot Starter 通过 {@code @ConfigurationProperties} 注入；
- * Java Agent 通过读取 {@code -D} 系统属性初始化。
+ * <p>Java Agent 通过读取 {@code -D} 系统属性初始化。
  */
 public class GrayProperties {
 
