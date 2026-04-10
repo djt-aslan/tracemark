@@ -1,5 +1,6 @@
 package io.tracemark.agent.advice;
 
+import io.tracemark.agent.GrayTraceLogger;
 import io.tracemark.gray.core.GrayConstants;
 import io.tracemark.gray.core.GrayContext;
 import net.bytebuddy.asm.Advice;
@@ -21,6 +22,9 @@ public class OkHttpOutboundAdvice {
             request = request.newBuilder()
                     .header(GrayConstants.HEADER_GRAY_TAG, tag)
                     .build();
+
+            // 日志输出
+            GrayTraceLogger.logOutbound(tag, request.url().toString(), Thread.currentThread().getName());
         }
     }
 }

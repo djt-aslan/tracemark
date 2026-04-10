@@ -1,5 +1,6 @@
 package io.tracemark.agent.advice;
 
+import io.tracemark.agent.GrayTraceLogger;
 import io.tracemark.gray.core.GrayConstants;
 import io.tracemark.gray.core.GrayContext;
 import net.bytebuddy.asm.Advice;
@@ -15,6 +16,9 @@ public class RestTemplateOutboundAdvice {
         String tag = GrayContext.get();
         if (tag != null && !tag.isEmpty()) {
             request.getHeaders().set(GrayConstants.HEADER_GRAY_TAG, tag);
+
+            // 日志输出
+            GrayTraceLogger.logOutbound(tag, request.getURI().toString(), Thread.currentThread().getName());
         }
     }
 }
