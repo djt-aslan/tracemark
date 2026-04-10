@@ -1,5 +1,6 @@
 package io.tracemark.agent.advice;
 
+import io.tracemark.agent.GrayTraceLogger;
 import io.tracemark.gray.core.GrayConstants;
 import io.tracemark.gray.core.GrayContext;
 import net.bytebuddy.asm.Advice;
@@ -20,6 +21,9 @@ public class RocketMqProducerAdvice {
         if (tag != null && !tag.isEmpty()
                 && msg.getUserProperty(GrayConstants.MQ_PROPERTY_GRAY_TAG) == null) {
             msg.putUserProperty(GrayConstants.MQ_PROPERTY_GRAY_TAG, tag);
+
+            // 日志输出
+            GrayTraceLogger.logMq(tag, msg.getTopic(), Thread.currentThread().getName());
         }
     }
 }
