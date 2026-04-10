@@ -111,4 +111,23 @@ class AgentConfigLoaderTest {
             System.clearProperty("gray.trace.completable-future.enabled");
         }
     }
+
+    @Test
+    @DisplayName("默认日志开关关闭")
+    void defaultLogDisabled() {
+        GrayProperties props = AgentConfigLoader.load();
+        assertFalse(props.getLog().isEnabled());
+    }
+
+    @Test
+    @DisplayName("通过系统属性开启日志")
+    void logEnabledViaSystemProperty() {
+        System.setProperty("gray.trace.log.enabled", "true");
+        try {
+            GrayProperties props = AgentConfigLoader.load();
+            assertTrue(props.getLog().isEnabled());
+        } finally {
+            System.clearProperty("gray.trace.log.enabled");
+        }
+    }
 }
