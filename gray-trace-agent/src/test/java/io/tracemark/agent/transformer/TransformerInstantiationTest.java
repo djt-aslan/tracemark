@@ -73,4 +73,11 @@ class TransformerInstantiationTest {
         RocketMqProducerTransformer transformer = new RocketMqProducerTransformer();
         assertNotNull(transformer);
     }
+
+    @Test
+    @DisplayName("JdkHttpClientOutboundTransformer 应能正常实例化")
+    void jdkHttpClientOutboundTransformer_shouldInstantiate() {
+        JdkHttpClientOutboundTransformer transformer = new JdkHttpClientOutboundTransformer();
+        assertNotNull(transformer);
+    }
 }
