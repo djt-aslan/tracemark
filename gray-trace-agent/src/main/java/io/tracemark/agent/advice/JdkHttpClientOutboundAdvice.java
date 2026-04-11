@@ -54,7 +54,12 @@ public class JdkHttpClientOutboundAdvice {
             // 日志输出
             GrayTraceLogger.logOutbound(tag, uriString, Thread.currentThread().getName());
         } catch (Exception e) {
-            // 反射失败时静默忽略，不影响业务
+            // 反射失败时记录日志，不影响业务
+            if (GrayTraceLogger.isEnabled()) {
+                GrayTraceLogger.logOutbound("reflect-error",
+                        "JdkHttpClient reflection failed: " + e.getMessage(),
+                        Thread.currentThread().getName());
+            }
         }
     }
 
