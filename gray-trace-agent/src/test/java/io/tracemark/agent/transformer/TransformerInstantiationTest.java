@@ -1,5 +1,6 @@
 package io.tracemark.agent.transformer;
 
+import io.tracemark.agent.transformer.RocketMqConsumerTransformer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -78,6 +79,13 @@ class TransformerInstantiationTest {
     @DisplayName("JdkHttpClientOutboundTransformer 应能正常实例化")
     void jdkHttpClientOutboundTransformer_shouldInstantiate() {
         JdkHttpClientOutboundTransformer transformer = new JdkHttpClientOutboundTransformer();
+        assertNotNull(transformer);
+    }
+
+    @Test
+    @DisplayName("RocketMqConsumerTransformer 应能正常实例化")
+    void rocketMqConsumerTransformer_shouldInstantiate() {
+        RocketMqConsumerTransformer transformer = new RocketMqConsumerTransformer();
         assertNotNull(transformer);
     }
 }
