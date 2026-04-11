@@ -6,38 +6,38 @@
 
 ### 入口染色（提取 Header）
 
-| 类型 | 支持 | 说明 |
-|------|------|------|
-| javax Servlet | ✅ | Spring Boot 2.x |
-| jakarta Servlet | ✅ | Spring Boot 3.x |
-| WebFlux | ❌ | 待实现 |
+| 类型 | 支持 | 版本要求 | 说明 |
+|------|------|---------|------|
+| javax Servlet | ✅ | Spring 5.x | Spring Boot 2.x |
+| jakarta Servlet | ✅ | Spring 6.x | Spring Boot 3.x / 4.x |
+| WebFlux | ❌ | - | 待实现 |
 
 ### 出口染色（注入 Header）
 
-| 类型 | 支持 | 说明 |
-|------|------|------|
-| RestTemplate | ✅ | Spring RestTemplate |
-| OkHttp | ✅ | OkHttp 3.x / 4.x |
-| Apache HttpClient 4.x | ✅ | org.apache.http |
-| Apache HttpClient 5.x | ✅ | org.apache.hc.client5 |
-| JDK HttpClient | ✅ | Java 11+ |
-| OpenFeign | ❌ | 待实现 |
-| WebClient | ❌ | 待实现 |
+| 类型 | 支持 | 版本要求 | 说明 |
+|------|------|---------|------|
+| RestTemplate | ✅ | Spring 5.x / 6.x | Spring Boot 2.x / 3.x / 4.x |
+| OkHttp | ✅ | OkHttp 4.x | 3.x 待支持 |
+| Apache HttpClient 4.x | ✅ | 4.5.x+ | org.apache.http |
+| Apache HttpClient 5.x | ✅ | 5.x | org.apache.hc.client5 |
+| JDK HttpClient | ✅ | Java 11+ | Java 8 不支持（自动跳过） |
+| OpenFeign | ❌ | - | 待实现 |
+| WebClient | ❌ | - | 待实现 |
 
 ### 异步传递
 
-| 类型 | 支持 | 说明 |
-|------|------|------|
-| ThreadPoolExecutor | ✅ | TTL 包装 |
-| CompletableFuture | ✅ | TTL 包装 |
-| @Async | ✅ | Spring @Async |
+| 类型 | 支持 | 版本要求 | 说明 |
+|------|------|---------|------|
+| ThreadPoolExecutor | ✅ | JDK 8+ | TTL 包装 |
+| CompletableFuture | ✅ | JDK 8+ | TTL 包装 |
+| @Async | ✅ | Spring 5.x / 6.x | Spring @Async |
 
 ### 消息队列
 
-| 类型 | 支持 | 说明 |
-|------|------|------|
-| RocketMQ Producer | ✅ | 注入消息属性 |
-| RocketMQ Consumer | ✅ | 恢复上下文 |
+| 类型 | 支持 | 版本要求 | 说明 |
+|------|------|---------|------|
+| RocketMQ Producer | ✅ | Client 4.x | 注入消息属性，3.x / 5.x 待验证 |
+| RocketMQ Consumer | ✅ | Client 4.x | 恢复上下文，3.x / 5.x 待验证 |
 
 ## 快速接入
 
