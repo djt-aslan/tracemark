@@ -137,7 +137,12 @@ spec:
 | Servlet 入口 (jakarta) | `jakarta.servlet.http.HttpServlet#service()` | Spring Boot 3.x 自动识别 |
 | RestTemplate | `org.springframework.http.client.AbstractClientHttpRequest#execute()` | 注入 Header |
 | OkHttp | `okhttp3.internal.connection.RealCall#execute()` | 注入 Header |
+| JDK HttpClient | `java.net.http.HttpClient#send()` / `sendAsync()` | 注入 Header |
+| Apache HttpClient 4.x | `org.apache.http.impl.client.CloseableHttpClient#execute()` | 注入 Header |
+| Apache HttpClient 5.x | `org.apache.hc.client5.http.impl.classic.CloseableHttpClient#execute()` | 注入 Header |
 | 线程池 | `java.util.concurrent.ThreadPoolExecutor#execute()` | TTL 包装 Runnable |
+| RocketMQ Producer | `org.apache.rocketmq.client.producer.DefaultMQProducer#send()` | 注入消息属性 |
+| RocketMQ Consumer | `org.apache.rocketmq.client.impl.consumer.PullAPIWrapper#processPullResult()` | 恢复上下文 |
 
 ---
 
