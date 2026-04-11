@@ -33,6 +33,7 @@ import java.util.logging.Logger;
  *   <li>RocketMQ DefaultMQProducer：发送前注入消息属性</li>
  *   <li>Apache HttpClient 4.x/5.x：出口注入 Header</li>
  *   <li>CompletableFuture 异步方法：TTL 包装保证异步上下文传递</li>
+ *   <li>RocketMQ DefaultMQConsumer：消费前恢复消息属性到 GrayContext</li>
  * </ul>
  */
 public class GrayTraceAgent {
@@ -127,6 +128,19 @@ public class GrayTraceAgent {
         if (config.getCompletableFuture().isEnabled()) {
             builder = builder.type(ElementMatchers.named("java.util.concurrent.CompletableFuture"))
                     .transform(new CompletableFutureAsyncTransformer());
+        }
+
+        // 8. JDK HttpClient 出口
+        if (config.getHttpClient().isEnabled()) {
+            builder = builder.type(ElementMatchers.named("java.net.http.HttpClient"))
+                    .transform(new JdkHttpClientOutboundTransformer());
+        }
+
+        // 9. RocketMQ 消费者
+        if (config.getMq().isEnabled() && config.getMq().isConsumer()) {
+            builder = builder.type(ElementMatchers.named(
+                            "org.apache.rocketmq.client.impl.consumer.PullAPIWrapper"))
+                    .transform(new RocketMqConsumerTransformer());
         }
 
         builder.installOn(inst);

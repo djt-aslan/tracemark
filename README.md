@@ -20,7 +20,7 @@
 | OkHttp | ✅ | OkHttp 3.x / 4.x |
 | Apache HttpClient 4.x | ✅ | org.apache.http |
 | Apache HttpClient 5.x | ✅ | org.apache.hc.client5 |
-| JDK HttpClient | ❌ | 待实现（Java 11+） |
+| JDK HttpClient | ✅ | Java 11+ |
 | OpenFeign | ❌ | 待实现 |
 | WebClient | ❌ | 待实现 |
 
@@ -37,7 +37,7 @@
 | 类型 | 支持 | 说明 |
 |------|------|------|
 | RocketMQ Producer | ✅ | 注入消息属性 |
-| RocketMQ Consumer | ❌ | 待实现 |
+| RocketMQ Consumer | ✅ | 恢复上下文 |
 
 ## 快速接入
 

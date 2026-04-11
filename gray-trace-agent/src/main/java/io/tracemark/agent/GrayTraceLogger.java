@@ -107,6 +107,22 @@ public final class GrayTraceLogger {
     }
 
     /**
+     * MQ Consumer 日志：从消息恢复上下文
+     *
+     * @param tag    灰度标签值
+     * @param topic  消息 Topic
+     * @param thread 当前线程名
+     */
+    public static void logMqConsumer(String tag, String topic, String thread) {
+        if (!enabled || tag == null || tag.isEmpty()) {
+            return;
+        }
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("[GrayTrace] MQ消费 → 恢复上下文, tag={}, topic={}, thread={}", tag, topic, thread);
+        }
+    }
+
+    /**
      * 检查日志是否启用
      *
      * @return 日志开关状态
